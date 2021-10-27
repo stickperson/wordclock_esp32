@@ -4,7 +4,6 @@
 
 class ClockServer;
 
-
 class ClockServer : public WebServer {
   public:
     ClockServer(int port = 80) : WebServer(port) {}
