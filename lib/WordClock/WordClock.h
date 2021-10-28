@@ -1,14 +1,15 @@
 #ifndef WORDCLOCK_H
 #define WORDCLOCK_H
-#include "AbstractDisplay.h"
+#include "AbstractLayout.h"
 
 class WordClock
 {
 public:
-  void addDisplay(AbstractDisplay &display);
+  void addLayout(AbstractLayout* layout);
+  void tick();
 
 private:
-  AbstractDisplay &_display;
+  AbstractLayout* _layout;
 };
 
 #endif

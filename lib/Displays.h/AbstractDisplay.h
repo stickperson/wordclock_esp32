@@ -4,8 +4,11 @@
 class AbstractDisplay
 {
 public:
-  virtual void setup(int NUM_LEDS) = 0;
-  virtual void update() = 0;
+  virtual void tick() = 0;
+  virtual void updatePosition(int position) = 0;
+
+protected:
+
 };
 
 #endif

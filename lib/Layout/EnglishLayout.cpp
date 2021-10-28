@@ -1,17 +1,16 @@
 #include "EnglishLayout.h"
 
 
-void EnglishLayout::setup(){
-  if (_display)
-}
+// void EnglishLayout::setup(){
+// }
 
-void EnglishLayout::update(int hour, int minute){
-  minute = minute / 5;
-}
+// void EnglishLayout::update(int hour, int minute){
+//   minute = minute / 5;
+// }
 
-void EnglishLayout::addDisplay(AbstractDisplay& display){
-  _display = display;
-}
+// void EnglishLayout::addDisplay(AbstractDisplay& display){
+//   _display = display;
+// }
 
 
 int EnglishLayout::time_it_is[4] = {0, 1, 3, 4};
