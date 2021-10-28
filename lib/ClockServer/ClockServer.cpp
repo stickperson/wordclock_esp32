@@ -3,6 +3,12 @@
 #include "ClockServer.h"
 #include "Templates.h"
 
+ClockServer::ClockServer(int port, WordClock& wordclock)
+: WebServer(port)
+, _clock(wordclock)
+{
+}
+
 
 void ClockServer::_handleRoot() {
   ClockServer::send(200, "text/html", FPSTR(uploadContent));
@@ -10,8 +16,10 @@ void ClockServer::_handleRoot() {
 
 
 void ClockServer::_handleBirthday(){
-  birthdays[birthdayIdx] = (Birthday) {ClockServer::arg("month").toInt(), ClockServer::arg("day").toInt()};
-  birthdayIdx++;
+  int month, day;
+  month = ClockServer::arg("month").toInt();
+  day = ClockServer::arg("day").toInt();
+  _clock.addBirthday(month, day);
   send(200, "text/plain", "Yay");
 }
 
@@ -24,8 +32,6 @@ void ClockServer::_handleDate() {
     for (uint8_t i = 0; i < ClockServer::args(); i++) {
       message += " " + ClockServer::argName(i) + ": " + ClockServer::arg(i) + "\n";
     }
-    Serial.println();
-    Serial.print("Getting some stuff");
 
     // Update timezone
     setenv("TZ", ClockServer::arg("timezone").c_str(), 1);

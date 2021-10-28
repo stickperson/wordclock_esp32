@@ -1,45 +1,69 @@
 #include "EnglishLayout.h"
 
+void EnglishLayout::tick(){
+    _display->tick();
+}
 
-// void EnglishLayout::setup(){
-// }
+void EnglishLayout::setBirthday(){
+    _display->rainbowWord(HAPPY);
+    _display->rainbowWord(BIRTHDAY);
+}
 
-// void EnglishLayout::update(int hour, int minute){
-//   minute = minute / 5;
-// }
+void EnglishLayout::setTime(int hour, int minute){
+    _display->updateWord(IT);
+    _display->updateWord(IS);
 
-// void EnglishLayout::addDisplay(AbstractDisplay& display){
-//   _display = display;
-// }
+    minute = minute / 5;
+    for (uint8_t i = 0; i < 4; i++){
+        if (EnglishLayout::minuteWords[minute][i] == SKIP_WORD){
+            break;
+        }
+        _display->updateWord(EnglishLayout::minuteWords[minute][i]);
+    }
+
+    if (minute > 35){
+        hour += 1;
+    }
+    hour = hour % 12;
+    _display->updateWord(EnglishLayout::hourWords[hour % 12]);
+
+    // Word first = {0, 1};
+    // Word rainbow = {1, 4};
+    // Word third = {5, 6};
+    // Word rainbowTwo = {6, 10};
+    // _display->updateWord(first);
+    // _display->updateWord(third);
+    // _display->rainbowWord(rainbow);
+    // _display->rainbowWord(rainbowTwo);
+}
 
 
-int EnglishLayout::time_it_is[4] = {0, 1, 3, 4};
-
-int EnglishLayout::time_minutes[11][22] = {
-    {124, 125, 126, 127, 128, 129, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-    {26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 48, 49, 50, 51, -1, -1, -1, -1, -1, -1, -1},
-    {6, 7, 8, 31, 32, 33, 34, 35, 36, 37, 38, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-    {13, 14, 15, 16, 17, 18, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-    {124, 125, 126, 127, 128, 129, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-    {124, 125, 126, 127, 128, 129, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-    {124, 125, 126, 127, 128, 129, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-    {124, 125, 126, 127, 128, 129, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-    {124, 125, 126, 127, 128, 129, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-    {124, 125, 126, 127, 128, 129, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-    {124, 125, 126, 127, 128, 129, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+Word EnglishLayout::minuteWords[12][4] = {
+    {OCLOCK, SKIP_WORD, SKIP_WORD, SKIP_WORD},
+    {MFIVE, MINUTES, PAST, SKIP_WORD},
+    {MTEN, MINUTES, PAST, SKIP_WORD},
+    {QUARTER, PAST, SKIP_WORD, SKIP_WORD},
+    {TWENTY, MINUTES, PAST, SKIP_WORD},
+    {TWENTY, MFIVE, MINUTES, PAST},
+    {HALF, PAST, SKIP_WORD, SKIP_WORD},
+    {TWENTY, MFIVE, MINUTES, TO},
+    {TWENTY, MINUTES, TO, SKIP_WORD},
+    {QUARTER, TO, SKIP_WORD, SKIP_WORD},
+    {MTEN, MINUTES, TO, SKIP_WORD},
+    {MFIVE, MINUTES, TO, SKIP_WORD},
 };
 
-int EnglishLayout::time_hours[12][10] = {
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
+Word EnglishLayout::hourWords[12] = {
+    TWELVE,
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
+    HFIVE,
+    SIX,
+    SEVEN,
+    EIGHT,
+    NINE,
+    HTEN,
+    ELEVEN,
 };
