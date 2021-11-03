@@ -1,62 +1,26 @@
 #include <Arduino.h>
 #include <ESPmDNS.h>
-#include <FastLED.h>
 #include <WiFi.h>
 #include "ClockServer.h"
 #include "credentials.h"
+#include "FastLedDisplay.h"
+#include "EnglishLayout.h"
+#include "WordClock.h"
 
-#define NUM_LEDS 12
-#define ALL_LEDS leds(0, NUM_LEDS-1)
-// #define IT leds(11, 12)
-// #define IS leds(8, 9)
-// #define MTEN leds(4, 6)
-// #define HALF leds(0, 3)
-// #define QUARTER leds(13, 19)
-// #define TWENTY leds(20, 25)
-// #define MFIVE leds(35, 38)
-// #define MINUTES leds(27, 33)
-// #define HAPPY leds(39, 43)
-// #define TO leds(45, 46)
-// #define PAST leds(48, 51)
-// #define BIRTHDAY leds(53, 60)
-// #define ONE leds(62, 64)
-#define ONE leds(1, 1)
-// #define ELEVEN leds(65, 70)
-#define ELEVEN leds(11, 11)
-// #define THREE leds(72, 76)
-#define THREE leds(3, 3)
-// #define FOUR leds(79, 82)
-#define FOUR leds(4, 4)
-// #define NINE leds(83, 86)
-#define NINE leds(9, 9)
-// #define SIX leds(88, 90)
-#define SIX leds(6, 6)
-// #define SEVEN leds(91, 95)
-#define SEVEN leds(7, 7)
-// #define HFIVE leds(96, 99)
-#define HFIVE leds(5, 5)
-// #define TWO leds(100, 102)
-#define TWO leds(2, 2)
-// #define HTEN leds(106, 108)
-#define HTEN leds(10, 10)
-// #define EIGHT leds(111, 115)
-#define EIGHT leds(8, 8)
-// #define TWELVE leds(117, 122)
-#define TWELVE leds(0, 0)
-// #define OCLOCK leds(124, 129)
 
-ClockServer server(80);
-
-CHSV color = CHSV(0, 0, 255);
-CRGBArray<NUM_LEDS> leds;
-
+WordClock wordclock;
+ClockServer server(80, wordclock);
+EnglishLayout layout;
+FastLedDisplay<layout.NUM_LEDS> display;
 
 void setup() {
   delay(1000);
   Serial.begin(9600);
-  FastLED.addLeds<APA102, 26, 27, BGR>(leds, NUM_LEDS);
-  FastLED.setBrightness(32);
-  FastLED.setMaxPowerInVoltsAndMilliamps(5, 2200);
+  display.setup();
+  // layout.addDisplay(&display);
+  layout.addDisplay(&display);
+  wordclock.addLayout(&layout);
+
 
   Serial.println("Configuring access point...");
   WiFi.mode(WIFI_AP);
@@ -76,175 +40,16 @@ void setup() {
   Serial.println(WiFi.softAPIP());
 
   MDNS.addService("http", "tcp", 80);
-  FastLED.show();
 }
 
-void displayBirthday() {
-  static uint8_t hue=0;
-  // HAPPY.fill_rainbow(hue++);
-  // BIRTHDAY.fill_rainbow(hue++);
-}
-
-void displayOff(){
-  ALL_LEDS = CRGB::Black;
-  displayBirthday();
-}
-
-
-void displayTime(){
-  displayOff();
-  time_t current;
-  time(&current);
-  struct tm timeinfo;
-  localtime_r(&current, &timeinfo);
-
-  int roundedMinute = timeinfo.tm_min / 5;
-  // switch (roundedMinute)
-  // {
-  // case 0:
-  //   OCLOCK = color;
-  //   break;
-  // case 1:
-  //   MFIVE = color;
-  //   MINUTES = color;
-  //   PAST = color;
-  //   break;
-  // case 2:
-  //   MTEN = color;
-  //   MINUTES = color;
-  //   PAST = color;
-  //   break;
-  // case 3:
-  //   QUARTER = color;
-  //   PAST = color;
-  //   break;
-  // case 4:
-  //   TWENTY = color;
-  //   MINUTES = color;
-  //   PAST = color;
-  //   break;
-  // case 5:
-  //   TWENTY = color;
-  //   MFIVE = color;
-  //   MINUTES = color;
-  //   PAST = color;
-  //   break;
-  // case 6:
-  //   HALF = color;
-  //   PAST = color;
-  //   break;
-  // case 7:
-  //   TWENTY = color;
-  //   MFIVE = color;
-  //   MINUTES = color;
-  //   TO = color;
-  //   break;
-  // case 8:
-  //   TWENTY = color;
-  //   MINUTES = color;
-  //   TO = color;
-  //   break;
-  // case 9:
-  //   QUARTER = color;
-  //   TO = color;
-  //   break;
-  // case 10:
-  //   MTEN = color;
-  //   MINUTES = color;
-  //   TO = color;
-  //   break;
-  // case 11:
-  //   MFIVE = color;
-  //   MINUTES = color;
-  //   TO = color;
-  //   break;
-  // default:
-  //   break;
+void loop(){
+  // if (color < 50){
+  //   Serial.println(color);
+    wordclock.changeColor();
   // }
-
-  uint8_t hour = timeinfo.tm_hour;
-  if (timeinfo.tm_min > 35){
-    hour += 1;
-  }
-  hour = hour % 12;
-  switch (hour)
-  {
-    case 0:
-      TWELVE = color;
-      // Serial.println("One ");
-      break;
-    case 1:
-      ONE = color;
-      // Serial.println("One ");
-      break;
-    case 2:
-      TWO = color;
-      // Serial.println("Two ");
-      break;
-    case 3:
-      THREE = color;
-      // Serial.println("Three ");
-      break;
-    case 4:
-      FOUR = color;
-      // Serial.println("Four ");
-      break;
-    case 5:
-      HFIVE = color;
-      // Serial.println("Hour five ");
-      break;
-    case 6:
-      SIX = color;
-      // Serial.println("Six ");
-      break;
-    case 7:
-      SEVEN = color;
-      // Serial.println("Seven ");
-      break;
-    case 8:
-      EIGHT = color;
-      // Serial.println("Eight ");
-      break;
-    case 9:
-      NINE = color;
-      // Serial.println("Nine ");
-      break;
-    case 10:
-      HTEN = color;
-      // Serial.println("Ten ");
-      break;
-    case 11:
-      ELEVEN = color;
-      // Serial.println("Eleven ");
-      break;
-    case 12:
-      TWELVE = color;
-      // Serial.println("Twelve ");
-      break;
-    default:
-      break;
-  }
-}
-
-void loop() {
-  // Handle all the web stuff
+  // if (brightness < 5){
+  //   wordclock.changeBrightness();
+  // }
   server.handleClient();
-  displayTime();
-
-  time_t current;
-  time(&current);
-  struct tm timeinfo;
-  Serial.println(localtime_r(&current, &timeinfo));
-  // String message = "";
-  // for (uint8_t i = 0; i < server.birthdayIdx; i++)
-  // {
-  //   message += server.birthdays[i].month + ": " + server.arg(i) + "\n";
-  //   Serial.print("bday");
-  //   Serial.println();
-  //   Serial.print(server.birthdays[i].month);
-  //   Serial.println();
-  // }
-  // static uint8_t hue = 0;
-  // ALL_LEDS.fill_rainbow(hue++);
-  FastLED.show();
+  wordclock.tick();
 }

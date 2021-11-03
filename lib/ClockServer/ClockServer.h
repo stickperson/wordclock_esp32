@@ -1,23 +1,22 @@
+#ifndef CLOCKSERVER_H
+#define CLOCKSERVER_H
 #include <WebServer.h>
-#include "Birthday.h"
+#include "WordClock.h"
 
 
 class ClockServer;
 
 class ClockServer : public WebServer {
   public:
-    ClockServer(int port = 80) : WebServer(port) {}
+    ClockServer(int port, WordClock& clock);
 
     void begin();
-    static const uint8_t MAX_BIRTHDAYS = 10;
-    Birthday birthdays[MAX_BIRTHDAYS];
-    uint8_t birthdayIdx = 0;
 
   private:
-
-    WebServer _server;
-
+    WordClock _clock;
     void _handleRoot();
     void _handleBirthday();
     void _handleDate();
 };
+
+#endif
