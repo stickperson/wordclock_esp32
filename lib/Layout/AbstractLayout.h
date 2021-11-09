@@ -10,7 +10,7 @@ public:
   virtual void addDisplay(AbstractDisplay* display);
   virtual void setBirthday() = 0;
   virtual void setTime(int hour, int minute) = 0;
-  AbstractDisplay* _display;
+  AbstractDisplay* display;
   int NUM_LEDS;
 };
 

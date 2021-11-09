@@ -46,7 +46,7 @@ void setup() {
 void loop(){
   // if (color < 50){
   //   Serial.println(color);
-    wordclock.changeColor();
+    // wordclock.changeColor();
   // }
   // if (brightness < 5){
   //   wordclock.changeBrightness();

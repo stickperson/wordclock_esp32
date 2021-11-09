@@ -16,8 +16,7 @@ void WordClock::tick(bool force){
   struct tm timeinfo;
   localtime_r(&current, &timeinfo);
   if (force || timeinfo.tm_min > _lastUpdatedMinute){
-    Serial.println("tick");
-    _layout->_display->off();
+    _layout->display->off();
     _layout->setTime(timeinfo.tm_hour, timeinfo.tm_min);
     _lastUpdatedMinute = timeinfo.tm_min;
     if (timeinfo.tm_min == 59)
@@ -34,8 +33,8 @@ void WordClock::tick(bool force){
 }
 
 void WordClock::changeColor(){
-  if (_layout && _layout->_display){
-    _layout->_display->changeColor();
+  if (_layout && _layout->display){
+    _layout->display->changeColor();
     time_t current;
     time(&current);
     struct tm timeinfo;
@@ -51,8 +50,8 @@ void WordClock::changeColor(){
 }
 
 void WordClock::changeBrightness(){
-  if (_layout && _layout->_display){
-    _layout->_display->changeBrightness();
+  if (_layout && _layout->display){
+    _layout->display->changeBrightness();
     time_t current;
     time(&current);
     struct tm timeinfo;
