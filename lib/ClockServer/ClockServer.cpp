@@ -3,12 +3,14 @@
 #include "ClockServer.h"
 #include "Templates.h"
 
-ClockServer::ClockServer(int port, WordClock& wordclock)
+ClockServer::ClockServer(int port)
 : WebServer(port)
-, _clock(wordclock)
 {
 }
 
+void ClockServer::addClock(WordClock* clock){
+  _clock = clock;
+}
 
 void ClockServer::_handleRoot() {
   send(200, "text/html", FPSTR(rootContent));
@@ -29,7 +31,7 @@ void ClockServer::_handleBirthday(){
   // Serial.println(doc["month"]);
   int month = doc["month"];
   int day = doc["day"];
-  _clock.addBirthday(month, day);
+  _clock->addBirthday(month, day);
   send(200, "text/plain", "Yay");
 }
 
@@ -58,6 +60,7 @@ void ClockServer::_handleDate() {
     tv.tv_sec = doc["unix"];
     tv.tv_usec = 0;
     settimeofday(&tv, NULL);
+    _clock->tick(true);
 
     // Return
     send(200, "text/plain", "Yay");

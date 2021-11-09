@@ -10,7 +10,7 @@ public:
   void addBirthday(uint8_t month, uint8_t day);
   void changeColor();
   void changeBrightness();
-  void tick();
+  void tick(bool force=false);
 
 private:
   AbstractLayout* _layout;

@@ -9,7 +9,7 @@
 
 
 WordClock wordclock;
-ClockServer server(80, wordclock);
+ClockServer server(80);
 EnglishLayout layout;
 FastLedDisplay<layout.NUM_LEDS> display;
 
@@ -17,10 +17,11 @@ void setup() {
   delay(1000);
   Serial.begin(9600);
   display.setup();
-  // layout.addDisplay(&display);
   layout.addDisplay(&display);
   wordclock.addLayout(&layout);
 
+  // The clock can't be added when the server is instantiated because the display isn't added to the clock yet
+  server.addClock(&wordclock);
 
   Serial.println("Configuring access point...");
   WiFi.mode(WIFI_AP);

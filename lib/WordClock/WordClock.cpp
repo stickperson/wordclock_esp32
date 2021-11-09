@@ -10,12 +10,13 @@ void WordClock::addBirthday(uint8_t month, uint8_t day){
   Birthday::setBirthday(month, day);
 }
 
-void WordClock::tick(){
+void WordClock::tick(bool force){
   time_t current;
   time(&current);
   struct tm timeinfo;
   localtime_r(&current, &timeinfo);
-  if (timeinfo.tm_min > _lastUpdatedMinute){
+  if (force || timeinfo.tm_min > _lastUpdatedMinute){
+    Serial.println("tick");
     _layout->_display->off();
     _layout->setTime(timeinfo.tm_hour, timeinfo.tm_min);
     _lastUpdatedMinute = timeinfo.tm_min;
@@ -25,12 +26,12 @@ void WordClock::tick(){
     }
   }
 
-  if (Birthday::isBirthday(timeinfo.tm_mon, timeinfo.tm_mday)){
+  if (Birthday::isBirthday(timeinfo.tm_mon, timeinfo.tm_mday))
+  {
     _layout->setBirthday();
   }
-    _layout->tick();
+  _layout->tick();
 }
-
 
 void WordClock::changeColor(){
   if (_layout && _layout->_display){
@@ -58,10 +59,10 @@ void WordClock::changeBrightness(){
     localtime_r(&current, &timeinfo);
     _layout->setTime(timeinfo.tm_hour, timeinfo.tm_min);
     _lastUpdatedMinute = timeinfo.tm_min;
-    // if (timeinfo.tm_min == 59)
-    // {
-    //   _lastUpdatedMinute = 0;
-    // }
+    if (timeinfo.tm_min == 59)
+    {
+      _lastUpdatedMinute = 0;
+    }
     _layout->tick();
   }
 }
