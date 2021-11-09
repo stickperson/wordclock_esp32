@@ -6,7 +6,7 @@ Definition file for FastLedDisplay. Note: All methods must be implemented here b
 #include <Arduino.h>
 #include <FastLED.h>
 #include "AbstractDisplay.h"
-#define MAX_BRIGHTNESS 128
+#define MAX_BRIGHTNESS 32
 
 
 template <int NUM_LEDS>

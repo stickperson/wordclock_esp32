@@ -1,4 +1,4 @@
-static const char uploadContent[] PROGMEM =
+static const char rootContent[] PROGMEM =
 R"==(
 <!DOCTYPE html>
 <html>
@@ -139,9 +139,10 @@ R"==(
     </form>
   </div>
   <div class="container">
-    <div class="brand-title">Firmware</div>
-    <input type="date" name="dateofbirth" id="dateofbirth">
-    <button type="submit" id="upload">Upload</button>
+    <form class="inputs" enctype="multipart/form-data" id="ota_form">
+      <input type="file" name="update" id="ota">
+      <button type="submit">Upload</button>
+    </form>
   </div>
   <script>
     const timezones = {
@@ -638,6 +639,24 @@ R"==(
       const dateParts = document.getElementById("dateofbirth").value.split('-');
       document.getElementById("dobmonth").value = dateParts[1];
       document.getElementById("dobday").value = dateParts[2];
+    }
+
+    document.getElementById('ota_form').onsubmit = function(e){
+      e.preventDefault();
+      const form = document.getElementById('ota_form');
+      const formData = new FormData(form);
+
+      fetch('/update', {
+        method: 'POST',
+        body: formData
+      })
+      // .then(response => response.json())
+      .then(result => {
+        console.log('Success:', result);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     }
   </script>
 </body>
