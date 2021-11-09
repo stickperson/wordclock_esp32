@@ -16,6 +16,7 @@ void WordClock::tick(){
   struct tm timeinfo;
   localtime_r(&current, &timeinfo);
   if (timeinfo.tm_min > _lastUpdatedMinute){
+    _layout->_display->off();
     _layout->setTime(timeinfo.tm_hour, timeinfo.tm_min);
     _lastUpdatedMinute = timeinfo.tm_min;
     if (timeinfo.tm_min == 59)

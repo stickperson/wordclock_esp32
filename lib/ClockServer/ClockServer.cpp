@@ -16,9 +16,19 @@ void ClockServer::_handleRoot() {
 
 
 void ClockServer::_handleBirthday(){
-  int month, day;
-  month = arg("month").toInt();
-  day = arg("day").toInt();
+  String data = arg("plain");
+  StaticJsonDocument<64> doc;
+  DeserializationError error = deserializeJson(doc, data);
+
+  if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    send(400, "text/plain", "JSON deserialization failed");
+    return;
+  }
+  // Serial.println(doc["month"]);
+  int month = doc["month"];
+  int day = doc["day"];
   _clock.addBirthday(month, day);
   send(200, "text/plain", "Yay");
 }
@@ -28,18 +38,24 @@ void ClockServer::_handleDate() {
   if (method() != HTTP_POST) {
     send(405, "text/plain", "Method Not Allowed");
   } else {
-    String message = "POST form was:\n";
-    for (uint8_t i = 0; i < args(); i++) {
-      message += " " + argName(i) + ": " + arg(i) + "\n";
-    }
 
+    String data = arg("plain");
+    StaticJsonDocument<256> doc;
+    DeserializationError error = deserializeJson(doc, data);
+
+    if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      send(400, "text/plain", "JSON deserialization failed");
+      return;
+    }
     // Update timezone
-    setenv("TZ", arg("timezone").c_str(), 1);
+    setenv("TZ", doc["timezone"], 1);
     tzset();
 
     // Set the system time to the unix timestamp (seconds)
     struct timeval tv;
-    tv.tv_sec = arg("unix").toInt();
+    tv.tv_sec = doc["unix"];
     tv.tv_usec = 0;
     settimeofday(&tv, NULL);
 

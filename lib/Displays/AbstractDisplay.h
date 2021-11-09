@@ -10,6 +10,7 @@ public:
   virtual void changeBrightness(){};
   virtual void changeColor(){};
   virtual void setup(){};
+  virtual void off(){};
   virtual void updatePosition(int position) = 0;
   virtual void rainbowWord(Word word) = 0;
   virtual void updateWord(Word word) = 0;

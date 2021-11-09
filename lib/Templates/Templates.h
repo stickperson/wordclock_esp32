@@ -124,7 +124,6 @@ R"==(
     <div class="brand-title">Set Time</div>
     <form class="inputs" action="setDate" method="post" id="timezone_form">
       <select id="timezone" name="timezone"></select>
-      <input id="unix" name="unix" type="hidden"></input>
       <button type="submit" id="time_submit">Set</button>
     </form>
   </div>
@@ -133,8 +132,6 @@ R"==(
     <p>Max of 10</p>
     <form class="inputs" action="setBirthday" method="post" id="birthday_form">
       <input type="date" name="dateofbirth" id="dateofbirth">
-      <input type="hidden" name="month" id="dobmonth">
-      <input type="hidden" name="day" id="dobday">
       <button type="submit" id="birthday">Add</button>
     </form>
   </div>
@@ -628,17 +625,45 @@ R"==(
     updateTimezoneOptions();
     setTimezone();
 
+    function postData(url, data){
+      return fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      })
+    }
+
     // Update unix time when submitting
-    document.getElementById("timezone_form").onsubmit = function() {
-      const unix = document.getElementById("unix");
-      unix.value = Math.floor(Date.now() / 1000);
+    document.getElementById("timezone_form").onsubmit = function(e) {
+      e.preventDefault();
+      const data = {
+        unix: Math.floor(Date.now() / 1000),
+        timezone: document.getElementById("timezone").value
+      }
+      postData('setDate', data)
+      .then(result => {
+        console.log('success', result)
+      });
     }
 
     document.getElementById("birthday_form").onsubmit = function(e) {
-      // e.preventDefault();
+      e.preventDefault();
       const dateParts = document.getElementById("dateofbirth").value.split('-');
-      document.getElementById("dobmonth").value = dateParts[1];
-      document.getElementById("dobday").value = dateParts[2];
+      const data = {
+        month: dateParts[1],
+        day: dateParts[2],
+      }
+      postData('/setBirthday', data)
+      .then(result => {
+        console.log('Success:', result)
+      })
+      .catch(error => {
+        console.error('Error', error)
+      });
+      // document.getElementById("dobmonth").value = dateParts[1];
+      // document.getElementById("dobday").value = dateParts[2];
     }
 
     document.getElementById('ota_form').onsubmit = function(e){
@@ -648,7 +673,7 @@ R"==(
 
       fetch('/update', {
         method: 'POST',
-        body: formData
+        body: formData,
       })
       // .then(response => response.json())
       .then(result => {

@@ -1,5 +1,6 @@
 #ifndef CLOCKSERVER_H
 #define CLOCKSERVER_H
+#include <ArduinoJson.h>
 #include <Update.h>
 #include <WebServer.h>
 #include "WordClock.h"
