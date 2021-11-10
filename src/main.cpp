@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <ESPmDNS.h>
+#include <NTPClient.h>
+#include <WiFiManager.h>
 #include <WiFi.h>
+#include <WiFiUdp.h>
 #include "ClockServer.h"
 #include "credentials.h"
 #include "FastLedDisplay.h"
@@ -8,14 +11,33 @@
 #include "WordClock.h"
 
 
-WordClock wordclock;
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
+
+WordClock wordclock(timeClient);
+// WordClock wordclock;
 ClockServer server(80);
 EnglishLayout layout;
 FastLedDisplay<layout.NUM_LEDS> display;
 
+
+
 void setup() {
   delay(1000);
   Serial.begin(9600);
+  WiFiManager wifiManager;
+  WiFi.mode(WIFI_STA);
+
+  // Reset settings during development
+  // wifiManager.resetSettings();
+
+  bool res = wifiManager.autoConnect(APssid, APpassword);
+  if (res){
+    Serial.println("Connected");
+  } else {
+    Serial.println("Not connected");
+  }
+
   display.setup();
   layout.addDisplay(&display);
   wordclock.addLayout(&layout);
@@ -24,8 +46,6 @@ void setup() {
   server.addClock(&wordclock);
 
   Serial.println("Configuring access point...");
-  WiFi.mode(WIFI_AP);
-  WiFi.softAP(APssid, APpassword);
   if (!MDNS.begin("wordclock")) {
     Serial.println("Error setting up MDNS responder!");
     while (1) {
@@ -35,12 +55,8 @@ void setup() {
   Serial.println("mDNS responder started");
 
   server.begin();
-  Serial.println("Server started");
-
-  // Print the IP address ---------------------------------------------------
-  Serial.println(WiFi.softAPIP());
-
   MDNS.addService("http", "tcp", 80);
+  timeClient.begin();
 }
 
 void loop(){
@@ -51,6 +67,7 @@ void loop(){
   // if (brightness < 5){
   //   wordclock.changeBrightness();
   // }
+
   server.handleClient();
   wordclock.tick();
 }
