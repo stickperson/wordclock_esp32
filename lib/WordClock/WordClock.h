@@ -1,10 +1,10 @@
 #ifndef WORDCLOCK_H
 #define WORDCLOCK_H
 #include <NTPClient.h>
-#include "AbstractLayout.h"
-#include "Birthday.h"
 #include "OneButton.h"
 
+
+class AbstractLayout;
 class WordClock
 {
 public:

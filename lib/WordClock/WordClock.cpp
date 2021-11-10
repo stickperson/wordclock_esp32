@@ -1,6 +1,9 @@
-#include "WordClock.h"
 #include <Arduino.h>
 #include <sys/time.h>
+#include "AbstractLayout.h"
+#include "Birthday.h"
+#include "WordClock.h"
+
 
 
 WordClock::WordClock(NTPClient& timeClient, uint8_t brightnessPin, uint8_t colorPin)
