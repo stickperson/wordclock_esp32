@@ -1,7 +1,10 @@
 #include <Arduino.h>
+#include <ArduinoJson.h>
+#include <Update.h>
 #include <WebServer.h>
 #include "ClockServer.h"
 #include "Templates.h"
+#include "WordClock.h"
 
 ClockServer::ClockServer(int port)
 : WebServer(port)
