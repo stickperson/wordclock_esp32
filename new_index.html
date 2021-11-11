@@ -218,11 +218,14 @@
     #birthday-form {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
     }
 
     .form-control.birthday {
+      flex-grow: 1;
       width: auto;
+      margin: 5px;
     }
 
     .timezone-row {
@@ -489,10 +492,68 @@
         bottom: 3%;
       }
     }
+
+    .help {
+      display: inline-block;
+      position: absolute;
+      font-size: 18px;
+      right: 20px;
+      cursor: pointer;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 99;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      margin: 10% auto;
+      width: 60%;
+      box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.17);
+      animation-name: modalopen;
+      animation-duration: var(--modal-duration);
+    }
+
+    .modal-body {
+      padding: 10px 20px;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .modal-body p {
+      font-size: 15px;
+      color: #999;
+      flex-grow: 4;
+      text-align: left;
+    }
+
+    .modal-body i {
+      cursor: pointer;
+    }
+
   </style>
 </head>
 
 <body>
+  <div id="my-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-body">
+          <p>Follow this wizard to configure your clock. You can set the timezone, add birthdays, and upgrade the firmware here. After upgrading the firmware, the clock will reset and will need to be reconfigured.</p>
+        <i class="bi bi-x modal-close"></i>
+      </div>
+    </div>
+  </div>
+  <div class="help">
+    <i class="bi bi-question-circle"></i>
+  </div>
   <div class="wrapper">
     <form action="" id="wizard">
       <!-- SECTION 1 -->
@@ -560,6 +621,9 @@
                 <input class="form-control" type="file" name="update" id="ota">
               </div>
             </div>
+            <span>Note: this page may appear to freeze when uploading new firmware. Once the clock turns back on,
+              refresh this page to configure it again.
+            </span>
           </div>
         </div>
       </section>
@@ -1055,10 +1119,11 @@
         $('.birthday').each(function () {
             console.log( $( this ).val() );
         })
+        location.reload();
     }
 
     $(function () {
-        updateTimezoneOptions();
+      updateTimezoneOptions();
       $("#wizard").steps({
             headerTag: "h2",
             bodyTag: "section",
@@ -1066,7 +1131,7 @@
             enableAllSteps: true,
             transitionEffectSpeed: 500,
             labels: {
-                finish: "Submit",
+                finish: "Finish",
                 next: "Continue",
                 previous: "Previous"
             },
@@ -1103,6 +1168,12 @@
             console.log(this);
             console.log('clicked');
             $('#birthday-form').append('<input type="date" class="form-control birthday" name="dateofbirth" id="dateofbirth">');
+        });
+        $('.help').click(function(){
+          $('#my-modal').show();
+        });
+        $('.modal-close').click(function(){
+          $('#my-modal').hide();
         });
     })
 
