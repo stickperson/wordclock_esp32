@@ -58,22 +58,28 @@ public:
   }
 
   void changeColor(){
-    EVERY_N_MILLISECONDS(15)
-    {
-      color = CHSV(hue++, 255, 255);
-    }
+    color = CHSV(hue++, 255, 255);
+    FastLED.show();
   }
 
   void changeBrightness(){
-    EVERY_N_MILLISECONDS(15)
-    {
-      currentBrightness -= 2;
-      if (currentBrightness > MAX_BRIGHTNESS){
-        currentBrightness = MAX_BRIGHTNESS;
-      }
-      FastLED.setBrightness(currentBrightness);
-      FastLED.show();
+    currentBrightness -= 1;
+    if (currentBrightness > MAX_BRIGHTNESS){
+      currentBrightness = MAX_BRIGHTNESS;
     }
+    FastLED.setBrightness(currentBrightness);
+    FastLED.show();
+  }
+
+  void resetBrightness(){
+    currentBrightness = MAX_BRIGHTNESS;
+    FastLED.setBrightness(currentBrightness);
+    FastLED.show();
+  }
+
+  void resetColor(){
+    color = WHITE;
+    FastLED.show();
   }
 
 private:

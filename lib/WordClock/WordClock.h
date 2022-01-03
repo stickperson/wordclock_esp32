@@ -3,21 +3,34 @@
 #include <NTPClient.h>
 #include "AbstractLayout.h"
 #include "Birthday.h"
+#include "OneButton.h"
 
 class WordClock
 {
 public:
-  WordClock(NTPClient& timeClient);
+  WordClock(NTPClient& timeClient, uint8_t brightnessPin=4, uint8_t colorPin=5);
   void addLayout(AbstractLayout *layout);
   void addBirthday(uint8_t month, uint8_t day);
-  void changeColor();
-  void changeBrightness();
   void tick(bool force=false);
 
 private:
   NTPClient _timeClient;
   AbstractLayout *_layout;
   int8_t _lastUpdatedMinute = -1;
+  void _setTime(bool force = false);
+
+  // Brightness button
+  OneButton _brightnessButton;
+  u_long _lastBrightness = 0;
+  static void _handleBrightnessPressed(void *ptr);
+  static void _resetBrightness(void *ptr);
+
+  // Color button
+  OneButton _colorButton;
+  u_long _lastColorPressed = 0;
+  static void _handleColorPressed(void *ptr);
+  static void _resetColor(void *ptr);
+
 };
 
 #endif
