@@ -1,4 +1,4 @@
 .pio
 .vscode
-.bin
+*.bin
 credentials.h
