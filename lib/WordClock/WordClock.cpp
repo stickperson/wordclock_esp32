@@ -18,26 +18,29 @@ WordClock::WordClock(NTPClient& timeClient, uint8_t brightnessPin, uint8_t color
 void WordClock::_handleColorPressed(void *ptr){
   WordClock *instance = (WordClock *)ptr;
   u_long now = millis();
-  if ((now - instance->_lastColorPressed) > 20){
+  if ((now - instance->_lastColorPressed) > 100){
     instance->_lastColorPressed = now;
     if (instance->_layout && instance->_layout->display)
     {
       instance->_layout->display->changeColor();
-      instance->_setTime(true);
+      struct tm currentTime = instance->_getTime();
+      instance->_layout->display->off();
+      instance->_layout->setTime(currentTime.tm_hour, currentTime.tm_min);
     }
   }
 }
 
 
-// TODO: stop setting the time since this makes an external call. Instead, persist the time and then call display update
 void WordClock::_resetColor(void *ptr) {
   WordClock *instance = (WordClock *)ptr;
   Serial.println("restting color");
   if (instance->_layout && instance->_layout->display)
   {
     instance->_layout->display->resetColor();
+    struct tm currentTime = instance->_getTime();
+    instance->_layout->display->off();
+    instance->_layout->setTime(currentTime.tm_hour, currentTime.tm_min);
   }
-  instance->_setTime(true);
 }
 
 void WordClock::_handleBrightnessPressed(void *ptr) {
@@ -70,15 +73,21 @@ void WordClock::addBirthday(uint8_t month, uint8_t day){
 void WordClock::tick(bool force){
   _brightnessButton.tick();
   _colorButton.tick();
-  _setTime(force);
+  struct tm currentTime = WordClock::_getTime();
+  _setTime(currentTime, force);
+  _layout->tick();
 }
 
-void WordClock::_setTime(bool force){
+struct tm WordClock::_getTime(){
   time_t current;
   time(&current);
   struct tm timeinfo;
   localtime_r(&current, &timeinfo);
-  if (force || timeinfo.tm_min > _lastUpdatedMinute){
+  return timeinfo;
+}
+
+void WordClock::_setTime(struct tm timeInfo, bool force){
+  if (force || timeInfo.tm_min > _lastUpdatedMinute){
 
     // Call out to the NTP server every minute and sync time
     bool updateSuccessful = _timeClient.forceUpdate();
@@ -87,26 +96,26 @@ void WordClock::_setTime(bool force){
       struct timeval tv;
       tv.tv_sec = _timeClient.getEpochTime();
       tv.tv_usec = 0;
+      time_t current;
       settimeofday(&tv, NULL);
       time(&current);
-      localtime_r(&current, &timeinfo);
-      Serial.println(timeinfo.tm_hour);
+      localtime_r(&current, &timeInfo);
+      Serial.println(timeInfo.tm_hour);
     } else {
       Serial.println("Not successful");
     }
 
     _layout->display->off();
-    _layout->setTime(timeinfo.tm_hour, timeinfo.tm_min);
-    _lastUpdatedMinute = timeinfo.tm_min;
-    if (timeinfo.tm_min == 59)
+    _layout->setTime(timeInfo.tm_hour, timeInfo.tm_min);
+    _lastUpdatedMinute = timeInfo.tm_min;
+    if (timeInfo.tm_min == 59)
     {
       _lastUpdatedMinute = 0;
     }
   }
 
-  if (Birthday::isBirthday(timeinfo.tm_mon, timeinfo.tm_mday))
+  if (Birthday::isBirthday(timeInfo.tm_mon, timeInfo.tm_mday))
   {
     _layout->setBirthday();
   }
-  _layout->tick();
 }

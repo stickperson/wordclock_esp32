@@ -28,6 +28,7 @@ public:
       leds[i] = CRGB::Black;
     }
   }
+
   void tick(){
     FastLED.show();
   }
