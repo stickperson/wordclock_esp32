@@ -35,7 +35,7 @@ void WordClock::_handleColorPressed(void *ptr){
 
 void WordClock::_resetColor(void *ptr) {
   WordClock *instance = (WordClock *)ptr;
-  Serial.println("restting color");
+  Serial.println("resetting color");
   if (instance->_layout && instance->_layout->display)
   {
     instance->_layout->display->resetColor();
@@ -52,12 +52,14 @@ void WordClock::_handleBrightnessPressed(void *ptr) {
   if ((now - instance->_lastBrightness) > 100){
     instance->_lastBrightness = now;
     if (instance->_layout && instance->_layout->display){
+      Serial.println("chaning brightness");
       instance->_layout->display->changeBrightness();
     }
   }
 }
 
 void WordClock::_resetBrightness(void *ptr) {
+  Serial.println("resetting brightness");
   WordClock *instance = (WordClock *)ptr;
   if (instance->_layout && instance->_layout->display){
     instance->_layout->display->resetBrightness();
@@ -94,7 +96,7 @@ void WordClock::_setTime(struct tm timeInfo, bool force){
     // Call out to the NTP server every minute and sync time
     bool updateSuccessful = _timeClient.forceUpdate();
     if (updateSuccessful){
-      Serial.println("Successful");
+      Serial.println("Fetching time from NTP server successful");
       struct timeval tv;
       tv.tv_sec = _timeClient.getEpochTime();
       tv.tv_usec = 0;
@@ -104,7 +106,7 @@ void WordClock::_setTime(struct tm timeInfo, bool force){
       localtime_r(&current, &timeInfo);
       Serial.println(timeInfo.tm_hour);
     } else {
-      Serial.println("Not successful");
+      Serial.println("Fetching time from NTP server unsuccessful");
     }
 
     _layout->display->off();

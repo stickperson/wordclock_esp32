@@ -8,7 +8,7 @@ class AbstractLayout;
 class WordClock
 {
 public:
-  WordClock(NTPClient& timeClient, uint8_t brightnessPin=4, uint8_t colorPin=5);
+  WordClock(NTPClient& timeClient, uint8_t brightnessPin=5, uint8_t colorPin=4);
   void addLayout(AbstractLayout *layout);
   void addBirthday(uint8_t month, uint8_t day);
   void tick(bool force=false);

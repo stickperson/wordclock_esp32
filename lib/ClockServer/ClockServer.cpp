@@ -80,7 +80,6 @@ void ClockServer::_completeUpdate() {
 }
 
 void ClockServer::_startUpdate() {
-  Serial.println("Update starting");
   HTTPUpload &upload = this->upload();
   if (upload.status == UPLOAD_FILE_START) {
     Serial.printf("Update: %s\n", upload.filename.c_str());
