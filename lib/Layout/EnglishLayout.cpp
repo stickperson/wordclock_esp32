@@ -1,12 +1,16 @@
 #include "EnglishLayout.h"
 
 void EnglishLayout::tick(){
+    if (_birthdaySet){
+        display->rainbowWord(HAPPY);
+        display->rainbowWord(BIRTHDAY);
+    }
+
     display->tick();
 }
 
-void EnglishLayout::setBirthday(){
-    display->rainbowWord(HAPPY);
-    display->rainbowWord(BIRTHDAY);
+void EnglishLayout::setBirthday(bool flag){
+    _birthdaySet = flag;
 }
 
 void EnglishLayout::setTime(int hour, int minute){

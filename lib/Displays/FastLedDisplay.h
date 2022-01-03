@@ -60,7 +60,6 @@ public:
 
   void changeColor(){
     color = CHSV(hue++, 255, 255);
-    FastLED.show();
   }
 
   void changeBrightness(){
@@ -69,7 +68,6 @@ public:
       currentBrightness = MAX_BRIGHTNESS;
     }
     FastLED.setBrightness(currentBrightness);
-    FastLED.show();
   }
 
   void resetBrightness(){

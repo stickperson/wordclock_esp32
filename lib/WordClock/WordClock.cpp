@@ -27,7 +27,6 @@ void WordClock::_handleColorPressed(void *ptr){
     {
       instance->_layout->display->changeColor();
       struct tm currentTime = instance->_getTime();
-      instance->_layout->display->off();
       instance->_layout->setTime(currentTime.tm_hour, currentTime.tm_min);
     }
   }
@@ -117,8 +116,9 @@ void WordClock::_setTime(struct tm timeInfo, bool force){
     }
   }
 
-  if (Birthday::isBirthday(timeInfo.tm_mon, timeInfo.tm_mday))
-  {
-    _layout->setBirthday();
+  if (Birthday::isBirthday(timeInfo.tm_mon, timeInfo.tm_mday)){
+    _layout->setBirthday(true);
+  } else {
+    _layout->setBirthday(false);
   }
 }

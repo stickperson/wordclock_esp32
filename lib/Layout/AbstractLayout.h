@@ -8,7 +8,7 @@ class AbstractLayout
 public:
   virtual void tick() = 0;
   virtual void addDisplay(AbstractDisplay* display);
-  virtual void setBirthday() = 0;
+  virtual void setBirthday(bool flag) = 0;
   virtual void setTime(int hour, int minute) = 0;
   AbstractDisplay* display;
   int NUM_LEDS;

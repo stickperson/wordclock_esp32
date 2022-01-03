@@ -60,7 +60,7 @@
 class EnglishLayout : public AbstractLayout
 {
 public:
-  void setBirthday() override;
+  void setBirthday(bool flag) override;
   void setTime(int hour, int minute) override;
   void tick() override;
 
@@ -70,6 +70,7 @@ public:
 private:
   static Word minuteWords[12][4];
   static Word hourWords[12];
+  bool _birthdaySet = false;
 };
 
 #endif
