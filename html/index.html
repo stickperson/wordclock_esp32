@@ -539,6 +539,24 @@
       cursor: pointer;
     }
 
+    .progress-area {
+      width: 100%;
+      list-style: none;
+    }
+
+    .progress-area .content .progress-bar {
+      height: 6px;
+      width: 100%;
+      margin-top: 4px;
+      background: #fff;
+      border-radius: 30px;
+    }
+    .content .progress-bar .progress {
+      height: 100%;
+      width: 0%;
+      background: #6990F2;
+      border-radius: inherit;
+    }
   </style>
 </head>
 
@@ -616,14 +634,10 @@
               <h3>Firmware</h3>
             </div>
             <p>Upload new firmware (optional)</p>
-            <div class="form-row">
-              <div class="form-holder w-100">
-                <input class="form-control" type="file" name="update" id="ota">
-              </div>
-            </div>
-            <span>Note: this page may appear to freeze when uploading new firmware. Once the clock turns back on,
-              refresh this page to configure it again.
-            </span>
+                <div class="form1" enctype="multipart/form-data" id="ota_form">
+                  <input class="form-control" type="file" name="update" id="ota">
+                </div>
+            <section class="progress-area"></section>
           </div>
         </div>
       </section>
@@ -1115,11 +1129,68 @@
     }
 
     function onFinished() {
-        const timezone = $('#timezone').val();
-        $('.birthday').each(function () {
-            console.log( $( this ).val() );
-        })
-        location.reload();
+      const ota = $("#ota");
+      window.ota = ota;
+      if (ota && ota[0].files.length){
+        if (!ota[0].files[0].name.endsWith('.bin')){
+          alert('Must upload a .bin file');
+          return
+        }
+        const formData = new FormData();
+        formData.append('file', ota[0].files[0]);
+        uploadFile(formData);
+        return;
+      }
+      const timezone = $('#timezone').val();
+      $('.birthday').each(function () {
+          const dateParts = $(this).val() .split('-');
+          const birthdayData = {
+            month: dateParts[1],
+            day: dateParts[2],
+          }
+          postData('/setBirthday', birthdayData);
+      });
+
+      const timezoneData = {
+        unix: Math.floor(Date.now() / 1000),
+        timezone: $("#timezone").val()
+      }
+      postData('/setDate', timezoneData);
+      location.reload();
+    }
+
+    function uploadFile(data){
+      let xhr = new XMLHttpRequest();
+      progressArea = document.querySelector(".progress-area"),
+      xhr.open("POST", "/update");
+      xhr.upload.addEventListener("progress", ({loaded, total}) => {
+        let fileLoaded = Math.floor((loaded / total) * 100);
+        let fileTotal = Math.floor(total / 1000);
+        let progressHTML = `<li class="row">
+                          <i class="fas fa-file-alt"></i>
+                          <div class="content">
+                            <div class="details">
+                              <span class="name">Uploading</span>
+                              <span class="percent">${fileLoaded}%</span>
+                            </div>
+                            <div class="progress-bar">
+                              <div class="progress" style="width: ${fileLoaded}%"></div>
+                            </div>
+                          </div>
+                        </li>`;
+        progressArea.innerHTML = progressHTML;
+      });
+      xhr.send(data);
+    }
+
+    function postData(url, data){
+      return fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
     }
 
     $(function () {
