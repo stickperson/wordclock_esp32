@@ -48,7 +48,7 @@ public:
   }
 
   void updateWord(Word word) override {
-    int8_t position;
+    int position;
     for (position = word.startIndex; position < word.endIndex; position++){
       updatePosition(position);
     }

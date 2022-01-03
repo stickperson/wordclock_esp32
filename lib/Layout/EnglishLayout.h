@@ -26,7 +26,7 @@
 #define EIGHT Word{105, 109}
 #define HTEN Word{112, 114}
 #define TWELVE Word{117, 122}
-#define OCLOCK Word{124, 129}
+#define OCLOCK Word{124, 130}
 #define ALL Word{0, 130}
 #define SKIP_WORD Word{0, 0}
 // #define IT Word{0, 2}

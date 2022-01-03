@@ -3,8 +3,8 @@
 #include <Arduino.h>
 
 struct Word {
-  uint8_t startIndex;
-  uint8_t endIndex;
+  int startIndex;
+  int endIndex;
 };
 
 inline bool operator==(const Word& w1, const Word& w2){
