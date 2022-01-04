@@ -4,12 +4,10 @@
 #include "Birthday.h"
 #include "WordClock.h"
 
-
-
-WordClock::WordClock(NTPClient& timeClient, uint8_t brightnessPin, uint8_t colorPin)
+WordClock::WordClock(NTPClient &timeClient, uint8_t brightnessPin, uint8_t colorPin)
 : _timeClient(timeClient),
-  _brightnessButton(brightnessPin, true, true),
-  _colorButton(colorPin, true, true)
+  _brightnessButton(brightnessPin, INPUT_PULLDOWN, false),
+  _colorButton(colorPin, INPUT_PULLDOWN, false)
 {
   _brightnessButton.attachDuringLongPress(WordClock::_handleBrightnessPressed, this);
   _brightnessButton.attachClick(WordClock::_resetBrightness, this);

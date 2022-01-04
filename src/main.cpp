@@ -60,14 +60,8 @@ void setup() {
 }
 
 void loop(){
-  // if (color < 50){
-  //   Serial.println(color);
-    // wordclock.changeColor();
-  // }
-  // if (brightness < 5){
-  //   wordclock.changeBrightness();
-  // }
-
+  // Write to internal LED during testing
+  digitalWrite(2, HIGH);
   server.handleClient();
   wordclock.tick();
 }
