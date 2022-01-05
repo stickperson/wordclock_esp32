@@ -89,7 +89,7 @@ struct tm WordClock::_getTime(){
 }
 
 void WordClock::_setTime(struct tm timeInfo, bool force){
-  if (force || timeInfo.tm_min > _lastUpdatedMinute){
+  if (force || timeInfo.tm_min > _lastUpdatedMinute || (timeInfo.tm_min == 0 && _lastUpdatedMinute == 59)){
 
     // Call out to the NTP server every minute and sync time
     bool updateSuccessful = _timeClient.forceUpdate();
@@ -110,10 +110,6 @@ void WordClock::_setTime(struct tm timeInfo, bool force){
     _layout->display->off();
     _layout->setTime(timeInfo.tm_hour, timeInfo.tm_min);
     _lastUpdatedMinute = timeInfo.tm_min;
-    if (timeInfo.tm_min == 59)
-    {
-      _lastUpdatedMinute = 0;
-    }
   }
 
   if (Birthday::isBirthday(timeInfo.tm_mon, timeInfo.tm_mday)){

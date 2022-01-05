@@ -1,7 +1,8 @@
 #include "EnglishLayout.h"
 
 void EnglishLayout::tick(){
-    if (_birthdaySet){
+    if (_birthdaySet)
+    {
         display->rainbowWord(HAPPY);
         display->rainbowWord(BIRTHDAY);
     }
@@ -14,11 +15,13 @@ void EnglishLayout::setBirthday(bool flag){
 }
 
 void EnglishLayout::setTime(int hour, int minute){
+    Serial.println("setting time");
     display->updateWord(IT);
     display->updateWord(IS);
 
     minute = minute / 5;
-    for (uint8_t i = 0; i < 4; i++){
+    for (uint8_t i = 0; i < 4; i++)
+    {
         if (EnglishLayout::minuteWords[minute][i] == SKIP_WORD){
             break;
         }
@@ -30,15 +33,6 @@ void EnglishLayout::setTime(int hour, int minute){
     }
     hour = hour % 12;
     display->updateWord(EnglishLayout::hourWords[hour % 12]);
-
-    // Word first = {0, 1};
-    // Word rainbow = {1, 4};
-    // Word third = {5, 6};
-    // Word rainbowTwo = {6, 10};
-    // display->updateWord(first);
-    // display->updateWord(third);
-    // display->rainbowWord(rainbow);
-    // display->rainbowWord(rainbowTwo);
 }
 
 
