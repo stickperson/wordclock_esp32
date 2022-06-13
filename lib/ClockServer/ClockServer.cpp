@@ -31,8 +31,9 @@ void ClockServer::_handleBirthday(){
     send(400, "text/plain", "JSON deserialization failed");
     return;
   }
-  // Serial.println(doc["month"]);
+  // Clock expects month as 0-indexed
   int month = doc["month"];
+  month -= 1;
   int day = doc["day"];
   _clock->addBirthday(month, day);
   send(200, "text/plain", "Yay");
