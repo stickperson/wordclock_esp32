@@ -16,4 +16,5 @@ bool Birthday::isBirthday(uint8_t month, uint8_t day){
   return Birthday::_birthdays & (1 << offset);
 }
 
+// This is an optimization that realistically isn't necessary. Consider changing to an array of structs.
 int16_t Birthday::_birthdays = 0;
