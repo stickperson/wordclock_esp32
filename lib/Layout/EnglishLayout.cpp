@@ -19,6 +19,11 @@ void EnglishLayout::setTime(int hour, int minute){
     display->updateWord(IT);
     display->updateWord(IS);
 
+    // Twenty five miinutes to next hour etc.
+    if (minute >= 35){
+        hour += 1;
+    }
+
     minute = minute / 5;
     for (uint8_t i = 0; i < 4; i++)
     {
@@ -28,9 +33,6 @@ void EnglishLayout::setTime(int hour, int minute){
         display->updateWord(EnglishLayout::minuteWords[minute][i]);
     }
 
-    if (minute > 35){
-        hour += 1;
-    }
     hour = hour % 12;
     display->updateWord(EnglishLayout::hourWords[hour % 12]);
 }
