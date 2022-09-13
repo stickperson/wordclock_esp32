@@ -10,10 +10,8 @@ public:
   static void setBirthday(uint8_t month, uint8_t day);
 
 private:
-  static int16_t _determineOffset(uint8_t month, uint8_t day);
-
   // TODO persist this in case of power failure
-  static int16_t _birthdays;
+  static bool _birthdays[12][31];
 };
 
 #endif
