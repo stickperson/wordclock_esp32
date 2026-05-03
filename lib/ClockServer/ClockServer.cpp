@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <Preferences.h>
 #include <Update.h>
 #include <WebServer.h>
 #include "Birthday.h"
@@ -79,9 +80,14 @@ void ClockServer::_handleDate() {
       send(400, "text/plain", "JSON deserialization failed");
       return;
     }
-    // Update timezone
-    setenv("TZ", doc["timezone"], 1);
+    // Update and persist timezone
+    const char* tz = doc["timezone"];
+    setenv("TZ", tz, 1);
     tzset();
+    Preferences prefs;
+    prefs.begin("clock", false);
+    prefs.putString("tz", tz);
+    prefs.end();
 
     // Set the system time to the unix timestamp (seconds)
     struct timeval tv;
@@ -126,6 +132,15 @@ void ClockServer::_startUpdate() {
 }
 
 void ClockServer::begin(){
+  Preferences prefs;
+  prefs.begin("clock", true);
+  String tz = prefs.getString("tz", "");
+  prefs.end();
+  if (tz.length() > 0) {
+    setenv("TZ", tz.c_str(), 1);
+    tzset();
+  }
+
   Serial.println("Beginning server");
   on("/", [this]{ _handleRoot(); });
   on("/getBirthdays", [this]{ _handleGetBirthdays(); });
