@@ -8,6 +8,7 @@
 #include "credentials.h"
 #include "FastLedDisplay.h"
 #include "EnglishLayout.h"
+#include "Birthday.h"
 #include "WordClock.h"
 
 
@@ -38,6 +39,7 @@ void setup() {
     Serial.println("Not connected");
   }
 
+  Birthday::load();
   display.setup();
   layout.addDisplay(&display);
   wordclock.addLayout(&layout);

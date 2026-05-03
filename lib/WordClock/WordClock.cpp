@@ -68,8 +68,8 @@ void WordClock::addLayout(AbstractLayout* layout){
   _layout = layout;
 }
 
-void WordClock::addBirthday(uint8_t month, uint8_t day){
-  Birthday::setBirthday(month, day);
+void WordClock::addBirthday(uint8_t month, uint8_t day, uint16_t year){
+  Birthday::setBirthday(month, day, year);
 }
 
 void WordClock::tick(bool force){

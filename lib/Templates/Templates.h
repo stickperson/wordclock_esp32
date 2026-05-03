@@ -663,10 +663,11 @@ async function finish() {
     return;
   }
   const promises = [];
+  await post('/clearBirthdays');
   document.querySelectorAll('.birthday').forEach(el => {
     if (!el.value) return;
-    const [, month, day] = el.value.split('-');
-    promises.push(post('/setBirthday', { month, day }));
+    const [year, month, day] = el.value.split('-');
+    promises.push(post('/setBirthday', { month, day, year: parseInt(year) }));
   });
   promises.push(post('/setDate', { unix: Math.floor(Date.now() / 1000), timezone: document.getElementById('tz').value }));
   await Promise.all(promises);
@@ -706,6 +707,17 @@ function post(url, data) {
     const guess = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (TZ[guess]) sel.value = TZ[guess];
   } catch (e) {}
+  fetch('/getBirthdays').then(r => r.json()).then(birthdays => {
+    birthdays.forEach(b => {
+      const mm = String(b.month).padStart(2, '0');
+      const dd = String(b.day).padStart(2, '0');
+      const yyyy = String(b.year || 2000).padStart(4, '0');
+      const row = document.createElement('div');
+      row.className = 'brow';
+      row.innerHTML = '<input type="date" class="birthday" value="' + yyyy + '-' + mm + '-' + dd + '"><button class="rm" onclick="this.parentNode.remove()">&#x2715;</button>';
+      document.getElementById('bday-list').appendChild(row);
+    });
+  });
 })();
 
 document.getElementById('add-bday').onclick = () => {

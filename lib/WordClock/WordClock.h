@@ -10,7 +10,7 @@ class WordClock
 public:
   WordClock(NTPClient& timeClient, uint8_t brightnessPin=4, uint8_t colorPin=16);
   void addLayout(AbstractLayout *layout);
-  void addBirthday(uint8_t month, uint8_t day);
+  void addBirthday(uint8_t month, uint8_t day, uint16_t year);
   void tick(bool force=false);
 
 private:

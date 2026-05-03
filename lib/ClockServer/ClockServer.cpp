@@ -2,6 +2,7 @@
 #include <ArduinoJson.h>
 #include <Update.h>
 #include <WebServer.h>
+#include "Birthday.h"
 #include "ClockServer.h"
 #include "Templates.h"
 #include "WordClock.h"
@@ -20,9 +21,31 @@ void ClockServer::_handleRoot() {
 }
 
 
+void ClockServer::_handleClearBirthdays(){
+  Birthday::clear();
+  send(200, "text/plain", "OK");
+}
+
+void ClockServer::_handleGetBirthdays(){
+  const BirthdayStore& bs = Birthday::store();
+  String json = "[";
+  for (uint8_t i = 0; i < bs.count; i++) {
+    if (i > 0) json += ",";
+    json += "{\"month\":";
+    json += bs.entries[i].month + 1;
+    json += ",\"day\":";
+    json += bs.entries[i].day;
+    json += ",\"year\":";
+    json += bs.entries[i].year;
+    json += "}";
+  }
+  json += "]";
+  send(200, "application/json", json);
+}
+
 void ClockServer::_handleBirthday(){
   String data = arg("plain");
-  StaticJsonDocument<64> doc;
+  StaticJsonDocument<96> doc;
   DeserializationError error = deserializeJson(doc, data);
 
   if (error) {
@@ -35,7 +58,8 @@ void ClockServer::_handleBirthday(){
   int month = doc["month"];
   month -= 1;
   int day = doc["day"];
-  _clock->addBirthday(month, day);
+  int year = doc["year"] | 0;
+  _clock->addBirthday(month, day, (uint16_t)year);
   send(200, "text/plain", "Yay");
 }
 
@@ -104,6 +128,8 @@ void ClockServer::_startUpdate() {
 void ClockServer::begin(){
   Serial.println("Beginning server");
   on("/", [this]{ _handleRoot(); });
+  on("/getBirthdays", [this]{ _handleGetBirthdays(); });
+  on("/clearBirthdays", [this]{ _handleClearBirthdays(); });
   on("/setBirthday", [this]{ _handleBirthday(); });
   on("/setDate", [this]{ _handleDate(); });
   on("/test", [this]{ _completeUpdate(); });

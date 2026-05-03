@@ -18,6 +18,8 @@ class ClockServer : public WebServer {
   private:
     WordClock* _clock;
     void _handleRoot();
+    void _handleGetBirthdays();
+    void _handleClearBirthdays();
     void _handleBirthday();
     void _handleDate();
     void _completeUpdate();
