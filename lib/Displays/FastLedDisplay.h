@@ -5,6 +5,7 @@ Definition file for FastLedDisplay. Note: All methods must be implemented here b
 #define WORDCLOCK_DISPLAY_FASTLED
 #include <Arduino.h>
 #include <FastLED.h>
+#include <Preferences.h>
 #include "AbstractDisplay.h"
 #define MAX_BRIGHTNESS 64
 
@@ -17,7 +18,11 @@ public:
   // TODO: look int FastLED.setCorrection
   void setup(){
     FastLED.addLeds<APA102, 26, 27, BGR>(leds, NUM_LEDS);
-    FastLED.setBrightness(MAX_BRIGHTNESS);
+    Preferences prefs;
+    prefs.begin("display", true);
+    currentBrightness = prefs.getUChar("brightness", MAX_BRIGHTNESS);
+    prefs.end();
+    FastLED.setBrightness(currentBrightness);
     FastLED.setMaxPowerInVoltsAndMilliamps(5, 2200);
     off();
     FastLED.show();
@@ -68,12 +73,14 @@ public:
       currentBrightness = MAX_BRIGHTNESS;
     }
     FastLED.setBrightness(currentBrightness);
+    _saveBrightness();
   }
 
   void resetBrightness(){
     currentBrightness = MAX_BRIGHTNESS;
     FastLED.setBrightness(currentBrightness);
     FastLED.show();
+    _saveBrightness();
   }
 
   void resetColor(){
@@ -82,6 +89,13 @@ public:
   }
 
 private:
+  void _saveBrightness(){
+    Preferences prefs;
+    prefs.begin("display", false);
+    prefs.putUChar("brightness", currentBrightness);
+    prefs.end();
+  }
+
   CRGB leds[NUM_LEDS];
   CHSV WHITE = CHSV(255, 0, 255);
   CHSV color = WHITE;
