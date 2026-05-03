@@ -26,6 +26,14 @@ public:
     FastLED.setMaxPowerInVoltsAndMilliamps(5, 2200);
     off();
     FastLED.show();
+    for (int i = 0; i < 3; i++) {
+      leds[12] = CRGB(255, 165, 0);
+      FastLED.show();
+      delay(200);
+      leds[12] = CRGB::Black;
+      FastLED.show();
+      delay(200);
+    }
   }
 
   void off(){
